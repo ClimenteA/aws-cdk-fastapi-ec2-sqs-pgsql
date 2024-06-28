@@ -1,0 +1,10 @@
+
+
+http://api.localhost {
+    reverse_proxy app:3000
+}
+
+
+http://pgadmin.localhost {
+    reverse_proxy pgadmin:80
+}

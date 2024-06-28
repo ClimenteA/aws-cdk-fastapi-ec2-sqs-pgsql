@@ -1,0 +1,74 @@
+version: "3"
+
+services:
+
+  app:
+    container_name: logs-api
+    build: .
+    command: python main.py
+    restart: unless-stopped
+    volumes:
+      - "./:/app"
+    ports:
+      - "${PORT}:${PORT}"
+    env_file:
+      - .env
+    networks:
+      - web
+      
+  pgsql:
+    container_name: postgressql-database
+    image: postgres
+    restart: unless-stopped
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRESQL_PORT}:${POSTGRESQL_PORT}"
+    networks:
+      - web
+
+  pgadmin:
+    container_name: pgadmin-container
+    image: dpage/pgadmin4
+    env_file:
+      - .env
+    ports:
+      - "15432:80"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    networks:
+      - web
+    depends_on:
+      - pgsql
+    
+  proxy:
+    container_name: caddyserver
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./public:/srv
+      - $PWD/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    env_file:
+      - .env
+    networks:
+      - web
+    depends_on:
+      - app
+
+
+networks:
+  web:
+    driver: bridge
+
+volumes:
+  pg_data:
+  pgadmin:
+  caddy_data:
+  caddy_config:

@@ -15,7 +15,7 @@ Base = declarative_base()
 
 
 async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
-    engine = create_async_engine(cfg.DATABASE_URL)
+    engine = create_async_engine(cfg.get_db_url())
     
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
