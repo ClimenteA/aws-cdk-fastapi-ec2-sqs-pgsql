@@ -1,8 +1,8 @@
-from repository import LogEntryRepo
-from database import get_db_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Response, Depends, status
-from schemas import LogEntrySchema, LogLevel, DefaultWebResponse
+from api.repository import LogEntryRepo
+from api.database import get_db_session
+from api.schemas import LogEntrySchema, LogLevel, DefaultWebResponse
 
 
 router = APIRouter(tags=["LogsRoutes"])

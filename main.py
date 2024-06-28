@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from router_logs import router as logs_api_router
+from api.router_logs import router as logs_api_router
 from multiprocessing import cpu_count
 from config import cfg
 
