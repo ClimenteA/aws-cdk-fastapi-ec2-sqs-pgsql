@@ -43,25 +43,7 @@ services:
     depends_on:
       - pgsql
     
-  proxy:
-    container_name: caddyserver
-    image: caddy:2-alpine
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - $PWD/Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-      - caddy_config:/config
-    env_file:
-      - .env
-    networks:
-      - web
-    depends_on:
-      - app
-
-
+    
 networks:
   web:
     driver: bridge
@@ -69,5 +51,3 @@ networks:
 volumes:
   pg_data:
   pgadmin:
-  caddy_data:
-  caddy_config:

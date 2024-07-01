@@ -1,7 +1,9 @@
+import uuid
 import aws_cdk as cdk
 import aws_cdk.aws_ec2 as ec2
 import aws_cdk.aws_iam as iam
 from constructs import Construct
+from config import cfg
 
 
 class EC2DeployStack(cdk.Stack):
@@ -19,10 +21,6 @@ class EC2DeployStack(cdk.Stack):
                 "AmazonSSMManagedInstanceCore"
             )
         )
-
-        # webServerRole.add_managed_policy(
-        #     iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AmazonEC2RoleforAWSCodeDeploy")
-        # )
 
         # This VPC has 3 public subnets, and that's it
         vpc = ec2.Vpc(
@@ -50,7 +48,24 @@ class EC2DeployStack(cdk.Stack):
             description="Allows Inbound HTTP traffic to the web server.",
             allow_all_outbound=True,
         )
-        webSg.add_ingress_rule(ec2.Peer.any_ipv4(), ec2.Port.tcp(80))
+
+        webSg.add_ingress_rule(
+            ec2.Peer.any_ipv4(),
+            ec2.Port.tcp(22),
+            description="allow ssh connect",
+        )
+
+        webSg.add_ingress_rule(
+            ec2.Peer.any_ipv4(),
+            ec2.Port.tcp(cfg.PORT),
+            description="allow http trafic to api",
+        )
+
+        webSg.add_ingress_rule(
+            ec2.Peer.any_ipv4(),
+            ec2.Port.tcp(15432),
+            description="allow http trafic to pgadmin",
+        )
 
         # the AMI to be used for the EC2 Instance
         ami = ec2.AmazonLinuxImage(
@@ -72,8 +87,40 @@ class EC2DeployStack(cdk.Stack):
         )
 
         # User data - used for bootstrapping
-        with open("cdk_ec2_start.sh", "r") as sh:
-            webSGUserData = sh.read()
+        webSGUserData = f"""
+#!/bin/bash -xe
+
+sudo yum update -y
+sudo yum install docker -y
+sudo yum install git -y
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo chkconfig docker on
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+git clone https://github.com/ClimenteA/aws-cdk-fastapi-ec2-sqs-pgsql.git
+cd aws-cdk-fastapi-ec2-sqs-pgsql
+
+
+cat <<EOF > .env
+PORT={cfg.PORT}
+DEBUG=0
+POSTGRES_PASSWORD={uuid.uuid4().hex}
+POSTGRES_USER=admin
+POSTGRES_DB=db
+POSTGRESQL_PORT={cfg.POSTGRESQL_PORT}
+PGADMIN_DEFAULT_EMAIL={cfg.PGADMIN_DEFAULT_EMAIL}
+PGADMIN_DEFAULT_PASSWORD={uuid.uuid4().hex}
+PGADMIN_LISTEN_PORT={cfg.PGADMIN_LISTEN_PORT}
+EOF
+
+
+sudo docker-compose up -d
+
+        """
+
+        cdk.CfnOutput(self, "Save this somewhere safe:\n", value=webSGUserData)
 
         webServer.add_user_data(webSGUserData)
 
@@ -82,13 +129,17 @@ class EC2DeployStack(cdk.Stack):
         cdk.Tags.of(webServer).add("stage", "prod")
 
         # Output the public IP address of the EC2 instance
-        cdk.CfnOutput(self, "IP Address", value=webServer.instance_public_ip)
+        cdk.CfnOutput(self, "IP Address:", value=webServer.instance_public_ip)
 
-
+        cdk.CfnOutput(
+            self, "API:", value=f"http://{webServer.instance_public_ip}:{cfg.PORT}/docs"
+        )
+        cdk.CfnOutput(
+            self, "PGADMIN:", value=f"http://{webServer.instance_public_ip}:15432"
+        )
 
 
 if __name__ == "__main__":
-    from config import cfg
 
     app = cdk.App()
 
