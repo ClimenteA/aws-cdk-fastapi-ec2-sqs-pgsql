@@ -28,6 +28,10 @@ class Config(BaseSettings):
     LOG_RETENTION: str = "1 week"
     LOG_PATH: str = "logs.log"
 
+
+    CDK_ACCOUNT: str
+    CDK_REGION: str 
+
     def get_db_url(self):
         return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@pgsql:{self.POSTGRESQL_PORT}/{self.POSTGRES_DB}"
         
