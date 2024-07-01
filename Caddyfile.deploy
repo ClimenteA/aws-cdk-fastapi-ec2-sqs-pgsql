@@ -1,8 +1,0 @@
-servicebell.api.softgata.com {    
-    reverse_proxy app:3000
-}
-
-
-servicebell.admin.softgata.com {
-    reverse_proxy pgadmin:80
-}

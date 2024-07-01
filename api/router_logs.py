@@ -1,9 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, Response, Depends, status
+from fastapi import APIRouter, Response, Depends, status, BackgroundTasks
 from api.repository import LogEntryRepo
 from api.database import get_db_session
 from api.schemas import LogEntrySchema, LogLevel, DefaultWebResponse
-
 
 router = APIRouter(tags=["LogsRoutes"])
 
@@ -15,13 +14,9 @@ router = APIRouter(tags=["LogsRoutes"])
 async def save_log(
     response: Response,
     data: LogEntrySchema,
-    session: AsyncSession = Depends(get_db_session),
+    background_tasks: BackgroundTasks,
 ):
-    err = await LogEntryRepo.save_log(session, data)
-    if err:
-        response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-        return DefaultWebResponse(status=LogLevel.ERROR, message=err)
-    
+    background_tasks.add_task(LogEntryRepo.save_log, data)
     response.status_code = status.HTTP_200_OK
-    return DefaultWebResponse(status=LogLevel.SUCCESS, message="log saved")
+    return DefaultWebResponse(status=LogLevel.SUCCESS, message="log added in queue")
     
