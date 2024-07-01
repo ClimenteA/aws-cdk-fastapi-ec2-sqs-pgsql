@@ -1,10 +1,8 @@
-# TODO
-
-http://api.localhost {
+servicebell.api.softgata.com {    
     reverse_proxy app:3000
 }
 
 
-http://pgadmin.localhost {
+servicebell.admin.softgata.com {
     reverse_proxy pgadmin:80
 }

@@ -22,6 +22,14 @@ arn:aws:cloudformation:eu-central-1:654654220275:stack/EC2SimpleStack/9bc839b0-3
 
 ```
 
+
+ec2-18-153-74-127.eu-central-1.compute.amazonaws.com
+
+ssh -i "ec2ui.pem" ubuntu@ec2-18-153-74-127.eu-central-1.compute.amazonaws.com
+
+scp -i "ec2ui.pem" -r ./main.py ubuntu@ec2-18-153-74-127.eu-central-1.compute.amazonaws.com:/usr/local/src
+
+
 <!-- 
 
 - `alembic init migrations`;

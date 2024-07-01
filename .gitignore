@@ -11,6 +11,8 @@ __pycache__
 .cdk.staging
 cdk.out
 
+ec2ui.pem
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
