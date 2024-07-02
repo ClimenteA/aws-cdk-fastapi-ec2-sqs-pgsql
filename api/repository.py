@@ -14,6 +14,7 @@ class LogEntryRepo:
                 db.add(db_log_entry)
                 await db.commit()
                 await db.refresh(db_log_entry)
+            log.info(f"Saved {data}")
             return None
         except Exception as err:
             log.exception(err)

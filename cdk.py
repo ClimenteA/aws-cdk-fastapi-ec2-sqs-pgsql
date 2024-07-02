@@ -110,6 +110,7 @@ POSTGRES_PASSWORD={uuid.uuid4().hex}
 POSTGRES_USER=admin
 POSTGRES_DB=db
 POSTGRESQL_PORT={cfg.POSTGRESQL_PORT}
+POSTGRESQL_HOST=pgsql
 PGADMIN_DEFAULT_EMAIL={cfg.PGADMIN_DEFAULT_EMAIL}
 PGADMIN_DEFAULT_PASSWORD={uuid.uuid4().hex}
 PGADMIN_LISTEN_PORT={cfg.PGADMIN_LISTEN_PORT}
@@ -147,7 +148,7 @@ if __name__ == "__main__":
 
     EC2DeployStack(
         app,
-        "EC2SimpleStack",
+        "EC2MonolithStack",
         env=cdk.Environment(account=cfg.CDK_ACCOUNT, region=cfg.CDK_REGION),
     )
 
