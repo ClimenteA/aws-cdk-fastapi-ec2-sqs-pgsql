@@ -39,8 +39,7 @@ if __name__ == "__main__":
     import uvicorn
     import alembic.config
 
-    alembic_args = ["--raiseerr", "upgrade", "head"]
-    alembic.config.main(argv=alembic_args)
+    alembic.config.main(argv=["--raiseerr", "upgrade", "head"])
 
     uvicorn.run(
         app="main:app",

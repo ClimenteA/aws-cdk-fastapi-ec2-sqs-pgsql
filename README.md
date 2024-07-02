@@ -25,7 +25,7 @@ Basic, but does the job.
 
 With aws cli and cdk cli available in your terminal do:
 - `cdk bootstrap` - if you are running this on a new account and didn't ran this before;
-- `cdk deploy` - this will deploy this application (Note: Here we are using a public github url - for private repos you need to change `cdk.py` to handle that);
+- `cdk deploy` - this will deploy this application. Note: Here we are using a public github url - for private repos you need to change `cdk.py` to handle that. After `cdk deploy` finishes you'll get connection details to the API and Database - save them somewhere safe;
 - `cdk destroy` - the stack will be destroyed; 
 
 
@@ -37,5 +37,5 @@ After deploy save the output somewhere safe and switch IP here:
 TODO:
 - PostgreSQL on a separate EC2;
 - Use AWS SQS instead of Starlette's Background task;
-- Prometheus/Grafana [observability](https://github.com/Blueswen/fastapi-observability)
+- Prometheus/Grafana [observability](https://github.com/Blueswen/fastapi-observability);
 - Tests;
