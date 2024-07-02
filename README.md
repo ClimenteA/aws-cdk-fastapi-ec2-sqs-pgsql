@@ -30,12 +30,38 @@ With aws cli and cdk cli available in your terminal do:
 
 
 After deploy save the output somewhere safe and switch IP here:
-- http://3.76.216.129:3000/docs - the rest api swagger;
-- http://3.76.216.129:15432     - the pgadmin UI; 
+- http://3.71.80.85:3000/docs - the rest api swagger;
+- http://3.71.80.85:15432     - the pgadmin UI; 
 
 
-TODO:
+Optimizations:
 - PostgreSQL on a separate EC2;
 - Use AWS SQS instead of Starlette's Background task;
 - Prometheus/Grafana [observability](https://github.com/Blueswen/fastapi-observability);
 - Tests;
+
+
+## Load testing
+
+Considering that on AWS t2.micro instance was used with 1 CPU and 1 GB of RAM and the entire app ran on that small EC2 results are pretty good. 
+
+Load tested with 1000 users at peak concurency - 1k users at the same time on an app is not common.
+The t2.micro machine got 22 failed requests out of 13577 post requests made (0.16% failure rate) which is pretty good.  
+Average response time was 324ms (we must take into consideration some latency - server in Frankfurt me in Iasi, Romania).
+The response time will be bigger from someone on another continent (lots of cable for that post request to travel), but with another EC2 instance close to the user will make it better. 
+
+
+Checkout locust.py and load_testing_reports.
+
+Locust ui config:
+![locust ui config](/load_testing_reports/locust-ui-config.png)
+
+
+## Results on localhost I7, 16GB RAM:
+![localhost](/load_testing_reports/localhost-results.png)
+
+## Results on AWS t2.micro:
+![t2micro](/load_testing_reports/results-t2-micro.png)
+
+## Resources for T2 MICRO are 1CPU 1GB RAM
+![t2microlist](/load_testing_reports/t2-list.png)
