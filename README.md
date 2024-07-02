@@ -2,11 +2,17 @@
 
 This is a extra small rest api made in Python FastAPI with PostgreSQL as a database. 
 SQLAlchemy async ORM is used to intereact with the database. 
-The entire app runs on a AWS EC2 instance and exposes a POST request which saves a log message to PostgreSQL.  
+The entire app runs on a AWS EC2 instance and exposes a POST request which saves a log message to PostgreSQL. PGAdmin is also available to see the data saved and perform custom queries.
 
 In `cdk.py` - Amazon Cloud Deployment Kit (AWS CDK) is used to create the AWS EC2 stack on which this dockerized rest api will run.
 
-In case something goes wrong `logs.log` contains all the errors needed for debugging. You can SSH in the EC2 instance from the aws console (search EC2 > Instances > Select Instance > Connect > Click `Connect` button on first Tab `EC2 Instance Connect`).
+In case something goes wrong `logs.log` contains all the errors needed for debugging (enter in api container with `sudo docker-compose exec app bash` there check the logs.log with `cat logs.log`). 
+
+You can SSH in the EC2 instance from the aws console (search EC2 > Instances > Select Instance > Connect > Click `Connect` button on first Tab `EC2 Instance Connect`). 
+
+If you need to do some live debugging SSH into the EC2 and do a `sudo docker-compose logs -ft app` for the restapi or `-ft pgsql` for Postgres. 
+
+Basic, but does the job.
 
 
 *If you are new to AWS go thru these resources:*
@@ -29,7 +35,7 @@ After deploy save the output somewhere safe and switch IP here:
 
 
 TODO:
-- Separate EC2 for PostgreSQL;
-- Use AWS SQS to save log;
-- Add [fastapi-observability](https://github.com/Blueswen/fastapi-observability)
+- PostgreSQL on a separate EC2;
+- Use AWS SQS instead of Starlette's Background task;
+- Prometheus/Grafana [observability](https://github.com/Blueswen/fastapi-observability)
 - Tests;

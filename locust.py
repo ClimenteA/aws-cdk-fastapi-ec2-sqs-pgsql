@@ -10,5 +10,5 @@ class LogsAPI(HttpUser):
     @task
     def perform_post_request(self):
         payload = {"level": "DEBUG", "message": "string"}
-        url = "http://3.76.216.129:3000/v1/save-log-sync"
+        url = "http://localhost:3000/v1/save-log-sync"
         self.client.post(url, json=payload)
