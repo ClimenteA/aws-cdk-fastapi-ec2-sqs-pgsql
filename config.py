@@ -18,6 +18,7 @@ class Config(BaseSettings):
     POSTGRES_USER: str = "admin"
     POSTGRES_DB: str = "testdb"
     POSTGRESQL_PORT: int = 5432
+    POSTGRESQL_HOST: str = "localhost"
 
     PGADMIN_DEFAULT_EMAIL: str = "admin@pgadmin.com"
     PGADMIN_DEFAULT_PASSWORD: str = "admin"
@@ -33,7 +34,7 @@ class Config(BaseSettings):
     CDK_REGION: str 
 
     def get_db_url(self):
-        return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@pgsql:{self.POSTGRESQL_PORT}/{self.POSTGRES_DB}"
+        return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRESQL_HOST}:{self.POSTGRESQL_PORT}/{self.POSTGRES_DB}"
         
 
 cfg = Config()
