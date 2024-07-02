@@ -2,3 +2,4 @@
 *.log
 *.sqlite
 ec2ui.pem
+.env

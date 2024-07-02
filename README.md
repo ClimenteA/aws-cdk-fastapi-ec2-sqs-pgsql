@@ -12,7 +12,7 @@ You can SSH in the EC2 instance from the aws console (search EC2 > Instances > S
 
 If you need to do some live debugging SSH into the EC2 and do a `sudo docker-compose logs -ft app` for the restapi or `-ft pgsql` for Postgres. 
 
-Basic, but does the job.
+I'll probably add Prometheus/Grafana for observability in the future.
 
 
 *If you are new to AWS go thru these resources:*
@@ -46,7 +46,8 @@ Optimizations:
 Considering that on AWS t2.micro instance was used with 1 CPU and 1 GB of RAM and the entire app ran on that small EC2 results are pretty good. 
 
 Load tested with 1000 users at peak concurency - 1k users at the same time on an app is not common.
-The t2.micro machine got 22 failed requests out of 13577 post requests made (0.16% failure rate) which is pretty good.  
+The t2.micro machine got 22 failed requests out of 13577 post requests made (0.16% failure rate) which is pretty good. 
+I also cross-checked the number of requests made by locust with number of rows saved in the db and it was a mismatch of 44 missing entries. After checking the logs I found some sqlalchemy Timeout errors which are the cause of those (Queue pool limit). Maybe with some DB tweaks those errors can be eliminated.  
 Average response time was 324ms (we must take into consideration some latency - server in Frankfurt me in Iasi, Romania).
 The response time will be bigger from someone on another continent (lots of cable for that post request to travel), but with another EC2 instance close to the user will make it better. 
 
